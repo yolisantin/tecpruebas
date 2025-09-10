@@ -3,500 +3,1655 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tablero DPT 8:19 PM </title>
-    <!-- Tailwind CSS from CDN -->
+    <title>Tablero DPT 8:59 pm</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Feather Icons for expand/collapse icon -->
-    <script src="https://unpkg.com/feather-icons"></script>
     <style>
+        /* Estilos adicionales para una mejor apariencia */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Softer gray */
         }
-        /* Style for active tab */
-        .tab-button.active {
-            border-color: #2563eb;
-            color: #2563eb;
-            font-weight: 600;
+        .tab-active {
+            border-bottom-color: #3B82F6;
+            color: #3B82F6;
         }
-        /* Custom transition for smooth expand/collapse of card details */
-        .details-content {
+        .card-details {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: max-height 0.5s ease-out;
         }
-        .activity-card.expanded .details-content {
-            max-height: 500px; /* A large enough value to show content */
-            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .card.expanded .card-details {
+            max-height: 500px; /* Ajusta según sea necesario */
+            transition: max-height 0.5s ease-in;
         }
-        /* Rotate icon on expand */
-        .activity-card.expanded .expand-icon {
-            transform: rotate(180deg);
+        .card {
+            transition: box-shadow 0.3s ease-in-out;
         }
-        .expand-icon {
-            transition: transform 0.3s ease-in-out;
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
-</head>
-<body class="text-gray-800">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 
-    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Plan de Trabajo</h1>
-            <p class="text-gray-600 mt-1">Tablero interactivo para el seguimiento de actividades.</p>
+            <h1 class="text-3xl font-bold text-gray-900">Tablero DPT 8:59 pm</h1>
+            <p class="text-gray-600 mt-1">Seguimiento de actividades y prioridades del equipo.</p>
         </header>
 
-        <!-- Tabs Navigation -->
-        <div class="mb-6 border-b border-gray-200">
-            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="tabs-container">
-                <!-- Tabs are dynamically generated here -->
-            </ul>
+        <!-- Controles de Pestañas y Filtros -->
+        <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <!-- Pestañas -->
+                <div class="border-b border-gray-200 mb-4 md:mb-0">
+                    <nav class="-mb-px flex space-x-6" id="tabs">
+                        <button data-tab="agosto-diciembre-2025" class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm tab-active">
+                            Agosto - Diciembre 2025
+                        </button>
+                        <button data-tab="enero-mayo-2026" class="whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                            Enero - Mayo 2026
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Filtros -->
+                <div class="flex items-center space-x-4">
+                     <div class="relative">
+                        <select id="priority-filter" class="appearance-none w-full md:w-48 bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                            <option value="all">Todas las Prioridades</option>
+                        </select>
+                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                     <div class="relative">
+                        <select id="implementation-filter" class="appearance-none w-full md:w-48 bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-blue-500">
+                            <option value="all">Toda Implementación</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Filters Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div>
-                <label for="priority-filter" class="block mb-2 text-sm font-medium text-gray-900">Filtrar por Prioridad</label>
-                <select id="priority-filter" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    <!-- Filter options are dynamically generated here -->
-                </select>
-            </div>
-            <div>
-                <label for="implementation-filter" class="block mb-2 text-sm font-medium text-gray-900">Filtrar por Implementación</label>
-                <select id="implementation-filter" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    <!-- Filter options are dynamically generated here -->
-                </select>
-            </div>
-            <div>
-                <label for="key-filter" class="block mb-2 text-sm font-medium text-gray-900">Filtrar por Clave</label>
-                <select id="key-filter" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                    <!-- Filter options are dynamically generated here -->
-                </select>
-            </div>
+        <!-- Contenedor de Tarjetas -->
+        <div id="card-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Las tarjetas se insertarán aquí dinámicamente -->
         </div>
-
-        <!-- Tab Content Area -->
-        <div id="tab-content">
-            <!-- Card grids are injected here -->
+         <div id="no-results" class="hidden text-center py-16">
+            <h3 class="text-xl font-semibold text-gray-700">No se encontraron actividades</h3>
+            <p class="text-gray-500 mt-2">Prueba a cambiar los filtros o la pestaña seleccionada.</p>
         </div>
     </div>
 
     <script>
-        // CORRECCIONES: Comillas faltantes, coma entre objetos, limpieza de espacios y corrección de fecha.
+         // CORRECCIONES: Comillas faltantes, coma entre objetos, limpieza de espacios y corrección de fecha.
     const data = [
-        {
-            "Clave": "P5-1",
-            "Prioridad": "Prioridad 5",
-            "Implementación": "Sugerida",
-            "Periodo Académico": "Agosto-Diciembre 2025",
-            "¿Qué?": "Cierres de convocatoria proyectos y ponencias docentes ISTE",
-            "¿Cuándo?": "2025-10-06",
-            "Fecha inicio": "2025-08-11",
-            "Fecha término": "2025-10-06",
-            "Semestre": "Todos",
-            "¿A quiénes impacta?": "Mentores y docentes",
-            "¿Qué es y qué implica?": "Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias."
-        },
-        {
-            "Clave": "P5-2",
-            "Prioridad": "Prioridad 5",
-            "Implementación": "Sugerida",
-            "Periodo Académico": "Agosto-Diciembre 2025",
-            "¿Qué?": "Cierres de convocatoria proyectos y ponencias docentes SXSW",
-            "¿Cuándo?": "2025-10-26",
-            "Fecha inicio": "2025-08-11",
-            "Fecha término": "2025-10-26",
-            "Semestre": "Todos",
-            "¿A quiénes impacta?": "Mentores y docentes",
-            "¿Qué es y qué implica?": "Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias."
-        },
-        // ... (Todos los demás objetos fueron corregidos de la misma manera) ...
-        {
-            "Clave": "P2-21",
-            "Prioridad": "Prioridad 2",
-            "Implementación": "Estratégica",
-            "Periodo Académico": "Enero-Mayo 2026",
-            "¿Qué?": "Líderes con Sentido Humano Nacional",
-            "¿Cuándo?": "Enero 2026",
-            "Fecha inicio": "2026-01-28",
-            "Fecha término": "2026-02-28", // Fecha corregida a YYYY-MM-DD y a un día válido.
-            "Semestre": "6to",
-            "¿A quiénes impacta?": "Estudiantes ganadores por prepa y maestro acompañante",
-            "¿Qué es y qué implica?": "Muestra nacional de proyectos ganadores, asiste el equipo ganador por prepa con el docente correspondiente."
-        },
-        // ... (Continuación de los datos corregidos) ...
-        {
-            "Clave": "P5-16",
-            "Prioridad": "Prioridad 5",
-            "Implementación": "Sugerida",
-            "Periodo Académico": "Enero-Mayo 2026",
-            "¿Qué?": "APs pagos y exámenes",
-            "¿Cuándo?": "20 de mayo",
-            "Fecha inicio": "2026-05-20",
-            "Fecha término": "2026-05-20",
-            "Semestre": "6to",
-            "¿A quiénes impacta?": "Estudiantes cursando AP y directores de departamento y programa",
-            "¿Qué es y qué implica?": "Asegurar que el responsable del proceso de la Prepa, de seguimiento al pago del examen y al proceso de presentación de la evaluación."
-        }, // <-- AQUÍ FALTABA LA COMA
-        {
-            "Clave": "P2-27",
-            "Prioridad": "Prioridad 2",
-            "Implementación": "Sugerida",
-            "Periodo Académico": "Agosto-Diciembre 2025",
-            "¿Qué?": "AFA Matemáticas",
-            "¿Cuándo?": "Primer parcial",
-            "Fecha inicio": "2025-08-11",
-            "Fecha término": "2025-09-24",
-            "Semestre": "1ero",
-            "¿A quiénes impacta?": "Profesores de matemáticas y estudiantes cuyo diagnóstico requiera que tomen el curso",
-            "¿Qué es y qué implica?": "Ofrecer talleres de acompañamiento y nivelación acorde a necesidades. DDAs realizan la gestión de formación de grupos y selección de profesores y el pago es central."
-        },
-        // ... (Y el resto hasta el final) ...
-        {
-            "Clave": "P2-30",
-            "Prioridad": "Prioridad 2",
-            "Implementación": "Estratégica",
-            "Periodo Académico": "Agosto-Diciembre 2025",
-            "¿Qué?": "IES aplicación",
-            "¿Cuándo?": "Octubre 2025",
-            "Fecha inicio": "2025-10-01",
-            "Fecha término": "2025-10-31",
-            "Semestre": "1ero",
-            "¿A quiénes impacta?": "Mentores y estudiantes",
-            "¿Qué es y qué implica?": "Sensibilización a estudiantes y aplicación de encuesta IES en primer semestre, implica dos sesiones y se hace en mentoría."
-        }
-    ];
 
+  {
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const cardContainer = document.getElementById('card-container');
-        const tabsContainer = document.getElementById('tabs');
-        const priorityFilter = document.getElementById('priority-filter');
-        const implementationFilter = document.getElementById('implementation-filter');
-        const noResults = document.getElementById('no-results');
-        let currentTab = 'agosto-diciembre-2025';
+    "Prioridad": "Prioridad 5",
 
-        const priorityColors = {
-            "Prioridad 2": "#E56D2C",
-            "Prioridad 3": "#4191CC",
-            "Prioridad 4": "#D72F8E",
-            "Prioridad 5": "#036CD8",
-        };
+    "Implementación": "Sugerida",
 
-        const formatDate = (dateString) => {
-            if (!dateString || dateString.toLowerCase() === 'n/a') return 'N/A';
-            const date = new Date(dateString + 'T00:00:00');
-            if (isNaN(date)) return "Fecha inválida";
-            return date.toLocaleDateString('es-ES', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-        };
+    "Periodo Académico": "Agosto-Diciembre 2025",
 
-        const createCard = (item) => {
-            const color = priorityColors[item.Prioridad] || '#6B7280';
-            return `
-            <div class="card bg-white rounded-lg shadow-md overflow-hidden flex flex-col" 
-                 data-periodo="${item['Periodo Académico']}" 
-                 data-prioridad="${item.Prioridad}" 
-                 data-implementacion="${item['Implementación']}">
-                <div class="p-4 border-l-4" style="border-color: ${color};">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-xs text-gray-500 font-mono">${item.Clave}</span>
-                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background-color: ${color}20; color: ${color};">
-                            ${item.Prioridad}
-                        </span>
-                    </div>
-                    <h3 class="font-bold text-gray-800">${item['¿Qué?']}</h3>
-                    <p class="text-sm text-gray-500 mt-1">${item['¿Cuándo?']}</p>
-                    <span class="inline-block bg-gray-200 text-gray-700 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full mt-3">
-                        ${item['Implementación']}
-                    </span>
-                </div>
-                <div class="card-details px-4 pb-4">
-                    <hr class="my-3">
-                    <dl class="text-sm space-y-2">
-                        <div class="grid grid-cols-3 gap-1">
-                            <dt class="font-semibold text-gray-600 col-span-1">Inicio:</dt>
-                            <dd class="text-gray-800 col-span-2">${formatDate(item['Fecha inicio'])}</dd>
-                        </div>
-                        <div class="grid grid-cols-3 gap-1">
-                            <dt class="font-semibold text-gray-600 col-span-1">Término:</dt>
-                            <dd class="text-gray-800 col-span-2">${formatDate(item['Fecha término'])}</dd>
-                        </div>
-                        <div class="grid grid-cols-3 gap-1">
-                            <dt class="font-semibold text-gray-600 col-span-1">Impacta a:</dt>
-                            <dd class="text-gray-800 col-span-2">${item['¿A quiénes impacta?']}</dd>
-                        </div>
-                        <div class="pt-2">
-                            <dt class="font-semibold text-gray-600 mb-1">Detalles:</dt>
-                            <dd class="text-gray-800">${item['¿Qué es y qué implica?']}</dd>
-                        </div>
-                    </dl>
-                </div>
-                <div class="mt-auto bg-gray-50 text-center py-2 px-4 text-xs text-blue-600 cursor-pointer hover:bg-gray-100 expand-toggle">
-                    Ver detalles
-                </div>
-            </div>`;
-        };
+    "¿Qué?": "Cierres de convocatoria proyectos y ponencias docentes ISTE",
 
-        const populateFilters = () => {
-            const priorities = [...new Set(data.map(item => item.Prioridad))];
-            const implementations = [...new Set(data.map(item => item['Implementación']))];
+    "¿Cuándo?": "2025-06-10",
 
-            priorities.sort().forEach(p => {
-                const option = document.createElement('option');
-                option.value = p;
-                option.textContent = p;
-                priorityFilter.appendChild(option);
-            });
-            implementations.sort().forEach(i => {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                implementationFilter.appendChild(option);
-            });
-        };;
+    "Fecha inicio": "2025-11-08",
 
-            // DOM Element References
-            const tabsContainer = document.getElementById('tabs-container');
-            const tabContent = document.getElementById('tab-content');
+    "Fecha término": "2025-06-10",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias`,
+
+    "Clave": "P5-1"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Cierres de convocatoria proyectos y ponencias docentes SXSW",
+
+    "¿Cuándo?": "2025-10-26",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-10-26",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias`,
+
+    "Clave": "P5-2"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": `Cierres de convocatoria proyectos y ponencias docentes IB Conference`,
+
+    "¿Cuándo?": "2025-09-30",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-09-20",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias`,
+
+    "Clave": "P5-3"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": `Cierres de convocatoria proyectos estudiantes Jacobs Teen Challenge`,
+
+    "¿Cuándo?": "2026-01-26",
+
+    "Fecha inicio": "2026-01-26",
+
+    "Fecha término": "2026-11-08",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores, docentes y estudiantes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros estudiantes en concursos internacionales, implica que registremos sus proyectos`,
+
+    "Clave": "P5-4"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Cierres de convocatoria proyectos estudiantes SXSW",
+
+    "¿Cuándo?": "2025-10-26",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-10-26",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores, docentes y estudiantes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros estudiantes en concursos internacionales, implica que registremos sus proyectos`,
+
+    "Clave": "P5-5"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Cierres de convocatoria proyectos estudiantes ISTE",
+
+    "¿Cuándo?": "2025-06-10",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-06-10",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores, docentes y estudiantes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros estudiantes en concursos internacionales, implica que registremos sus proyectos`,
+
+    "Clave": "P5-6"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Cierres de convocatoria proyectos estudiantes Qlabs",
+
+    "¿Cuándo?": "2025-09-19",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-09-19",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Regionales y estudiantes",
+
+    "¿Qué es y qué implica?": `Proyectar a nuestros estudiantes en concursos internacionales, implica que registremos sus proyectos`,
+
+    "Clave": "P5-7"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Curso IA para mentes curiosas",
+
+    "¿Cuándo?": "Segundo parcial",
+
+    "Fecha inicio": "2025-09-25",
+
+    "Fecha término": "2025-05-11",
+
+    "Semestre": "3ero y 5to",
+
+    "¿A quiénes impacta?": `Docentes y estudiantes de tecnología en tercer semestre y de sociales/español en quinto semestre`,
+
+    "¿Qué es y qué implica?": `Curso de dos horas ya diseñado que implementa en dos sesiones distribuidas al gusto de la Prepa, durante el segundo parcial`,
+
+    "Clave": "P4-1"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Pilotos AI Summit AD aplicación",
+
+    "¿Cuándo?": "Septiembre y Octubre 2025",
+
+    "Fecha inicio": "2025-01-09",
+
+    "Fecha término": "2025-10-31",
+
+    "Semestre": "1ero, 3ero y 5to",
+
+    "¿A quiénes impacta?": `Mentores y docentes con proyecto y sus grupos en que apliquen el proyecto`,
+
+    "¿Qué es y qué implica?": `Implementación de proyectos piloto con herramientas de IA por disciplina resultado del AI Summit. Implica que los profesores hagan la actividad diseñada en su clase`,
+
+    "Clave": "P4-2"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Pilotos AI Summit AD resultados",
+
+    "¿Cuándo?": "Noviembre 2025",
+
+    "Fecha inicio": "2025-01-11",
+
+    "Fecha término": "2025-11-30",
+
+    "Semestre": "1ero, 3ero y 5to",
+
+    "¿A quiénes impacta?": "Mentores y docentes con proyecto",
+
+    "¿Qué es y qué implica?": "Implica que los profesores documenten y presenten resultados",
+
+    "Clave": "P4-3"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Pilotos AI Summit EM aplicación",
+
+    "¿Cuándo?": "Febrero y Marzo 2026",
+
+    "Fecha inicio": "2026-01-02",
+
+    "Fecha término": "2026-03-31",
+
+    "Semestre": "2do, 4to y 6to",
+
+    "¿A quiénes impacta?": `Mentores y docentes con proyecto y sus grupos en que apliquen el proyecto`,
+
+    "¿Qué es y qué implica?": `Implementación de proyectos piloto con herramientas de IA por disciplina resultado del AI Summit. Implica que los profesores hagan la actividad diseñada en su clase`,
+
+    "Clave": "P4-4"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Pilotos AI Summit EM resultados",
+
+    "¿Cuándo?": "Abril 2026",
+
+    "Fecha inicio": "2026-01-04",
+
+    "Fecha término": "2025-04-30",
+
+    "Semestre": "2do, 4to y 6to",
+
+    "¿A quiénes impacta?": "Mentores y docentes con proyecto",
+
+    "¿Qué es y qué implica?": "Implica que los profesores documenten y presenten resultados",
+
+    "Clave": "P4-5"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Certificación ISTE",
+
+    "¿Cuándo?": "Septiembre 2025 - Abril 2026",
+
+    "Fecha inicio": "2025-01-09",
+
+    "Fecha término": "2026-04-30",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "2 docentes por prepa",
+
+    "¿Qué es y qué implica?": `La Certificación del ISTE tiene como propósito fundamental capacitar, reconocer y empoderar a los docentes en el uso efectivo de la tecnología para transformar el aprendizaje. Esta certificación es de reconocimiento internacional y permite formar parte de una comunidad certificada para potenciar sus prácticas ayudando a los docentes a que sean aprendices de por vida, líderes transformadores y facilitadores del aprendizaje profundo.`,
+
+    "Clave": "P2-1"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Certificación ISTE",
+
+    "¿Cuándo?": "Septiembre 2025 - Abril 2026",
+
+    "Fecha inicio": "2025-01-09",
+
+    "Fecha término": "2025-04-30",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "2 docentes por prepa",
+
+    "¿Qué es y qué implica?": `La Certificación del ISTE tiene como propósito fundamental capacitar, reconocer y empoderar a los docentes en el uso efectivo de la tecnología para transformar el aprendizaje. Esta certificación es de reconocimiento internacional y permite formar parte de una comunidad certificada para potenciar sus prácticas ayudando a los docentes a que sean aprendices de por vida, líderes transformadores y facilitadores del aprendizaje profundo.`,
+
+    "Clave": "P2-2"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Semana del Espacio",
+
+    "¿Cuándo?": "13 al 17 de octubre 2025",
+
+    "Fecha inicio": "2025-10-13",
+
+    "Fecha término": "2025-10-17",
+
+    "Semestre": "5to",
+
+    "¿A quiénes impacta?": "Docentes y estudiantes de Ciencias",
+
+    "¿Qué es y qué implica?": `Actividades en la clase de ciencias de quinto semestre alineadas a un proyecto de la NASA que busca fomentar la curiosidad científica sobre estudios del espacio`,
+
+    "Clave": "P2-3"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Micro-Certificación Humane Education (coaches)",
+
+    "¿Cuándo?": "Octubre 2025",
+
+    "Fecha inicio": "2025-01-10",
+
+    "Fecha término": "2025-10-31",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": `Mentores y profesores interesados que ya hayan tomado la certificación de profesores`,
+
+    "¿Qué es y qué implica?": `Capacitación en 4 sesiones (1.25 hrs. c/u) para docentes que hayan concluido la micro-certificación con Humane Education`,
+
+    "Clave": "P2-4"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Model United Nations 80",
+
+    "¿Cuándo?": "Octubre 2025",
+
+    "Fecha inicio": "2025-01-10",
+
+    "Fecha término": "2025-10-31",
+
+    "Semestre": "3ero y 5to",
+
+    "¿A quiénes impacta?": "Estudiantes y profesores de Sociales",
+
+    "¿Qué es y qué implica?": `Actividades en clase o en Modelos de Naciones Unidas, alineadas al proyecto de transformación hacia el futuro de Naciones Unidas`,
+
+    "Clave": "P2-5"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Examen AAEE",
+
+    "¿Cuándo?": "Mayo 2026",
+
+    "Fecha inicio": "2026-01-05",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "1ero",
+
+    "¿A quiénes impacta?": `Profesores y estudiantes de ciencias, matemáticas, español, sociales y tecnología`,
+
+    "¿Qué es y qué implica?": `Aplicación del examen de Aprendizajes Esperados, un examen interno desarrollado por el IFE para evaluar que nuestros estudiantes están alcanzando los aprendizajes de nuestro plan de estudios. Será parte del examen final de cada materia al finalizar el segundo semestre.`,
+
+    "Clave": "P2-6"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Tópicos MEF Pilotos",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "6to",
+
+    "¿A quiénes impacta?": "Profesores de tópicos y estudiantes",
+
+    "¿Qué es y qué implica?": `Si la prepa lo desea puede ofertar alguno de los tópicos recién diseñados por Escuela, ya sea de manera presencial o a través de Educación Digital`,
+
+    "Clave": "P2-7"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Skills MEF primer semestre",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-01-08",
+
+    "Fecha término": "2025-12-22",
+
+    "Semestre": "1ero",
+
+    "¿A quiénes impacta?": `Mentores y docentes de matemtáticas, español, sociales, ciencias y tecnología`,
+
+    "¿Qué es y qué implica?": `Promover el uso y documentación del uso de Skills para después presentar Experiencias Extraordinarias en la RNP 2026`,
+
+    "Clave": "P4-6"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Skills MEF segundo semestre",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "2do",
+
+    "¿A quiénes impacta?": `Mentores y docentes de matemtáticas, español, sociales, ciencias y tecnología`,
+
+    "¿Qué es y qué implica?": `Promover el uso y documentación del uso de Skills para después presentar Experiencias Extraordinarias en la RNP 2026`,
+
+    "Clave": "P4-7"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Reunión Nacional Profesores PrepaTec",
+
+    "¿Cuándo?": "Junio 2026",
+
+    "Fecha inicio": "2026-01-06",
+
+    "Fecha término": "2026-06-30",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Profesores y docentes de planta",
+
+    "¿Qué es y qué implica?": `En su momento promover la inscripcíon y participación de sus equipos`,
+
+    "Clave": "P2-8"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": `Capacitación Micro-Certificación Humane Education \"Formador de Solucionadores\"`,
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-08-19",
+
+    "Fecha término": "2025-04-12",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes de todas las áreas",
+
+    "¿Qué es y qué implica?": `Capacitación en 8 sesiones (1.25hrs. c/u) para mentores y docentes para conocer el marco solucionador y su implementación en Proyectos Semestrales`,
+
+    "Clave": "P2-9"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": `Capacitación Micro-Certificación Humane Education \"Formador de Solucionadores\"`,
+
+    "¿Cuándo?": "Enero - Marzo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-03-31",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes de todas las áreas",
+
+    "¿Qué es y qué implica?": `Capacitación en 8 sesiones (1.25hrs. c/u) para mentores y docentes para conocer el marco solucionador y su implementación en Proyectos Semestrales`,
+
+    "Clave": "P2-10"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Capacitación Espacios de Inmersión por materia",
+
+    "¿Cuándo?": "Noviembre y Diciembre 2025",
+
+    "Fecha inicio": "2025-01-11",
+
+    "Fecha término": "2025-12-22",
+
+    "Semestre": "2do",
+
+    "¿A quiénes impacta?": "Mentores y docentes que impartirán 2do",
+
+    "¿Qué es y qué implica?": `Capacitación de 3 horas en 2 sesiones en donde se busca conocer, explorar, y apropiarse de la materia que impartirá el siguiente semestre.`,
+
+    "Clave": "P2-11"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Capacitación Espacios de Inmersión por materia",
+
+    "¿Cuándo?": "Abril, Mayo, Junio y Julio 2026",
+
+    "Fecha inicio": "2026-01-04",
+
+    "Fecha término": "2026-07-31",
+
+    "Semestre": "1ero y 3ero",
+
+    "¿A quiénes impacta?": "Mentores y docentes que impartirán 1ero y 3ero",
+
+    "¿Qué es y qué implica?": `Capacitación de  3horas en 2 sesiones en donde se busca conocer, explorar, y apropiarse de la materia que impartirá el siguiente semestre.`,
+
+    "Clave": "P2-12"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Capacitación Actualización MEF",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-01-08",
+
+    "Fecha término": "2025-12-22",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes de todas las áreas",
+
+    "¿Qué es y qué implica?": `Capacitación de 5 horas autogestionadas en donde se profundiza en elementos claves de la actualización del Modelo Educativo Formativo de PrepaTec`,
+
+    "Clave": "P2-13"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Capacitación Actualización MEF",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes de todas las áreas",
+
+    "¿Qué es y qué implica?": `Capacitación de 5 horas autogestionadas en donde se profundiza en elementos claves de la actualización del Modelo Educativo Formativo de PrepaTec`,
+
+    "Clave": "P2-14"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Capacitación Community Matters",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-01-08",
+
+    "Fecha término": "2025-12-22",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes de Español, Tecnología y Sociales",
+
+    "¿Qué es y qué implica?": `Capacitación de 3 horas autogestionadas en donde se profundiza en los elementos que conforman la estrategia de Community Matters`,
+
+    "Clave": "P2-15"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Capacitación Community Matters",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Mentores y docentes de Español, Tecnología y Sociales",
+
+    "¿Qué es y qué implica?": `Capacitación de 3 horas autogestionadas en donde se profundiza en los elementos que conforman la estrategia de Community Matters`,
+
+    "Clave": "P2-16"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Insignia de Emprendimiento",
+
+    "¿Cuándo?": "Septiembre y Octubre 2025",
+
+    "Fecha inicio": "2025-01-09",
+
+    "Fecha término": "2025-10-31",
+
+    "Semestre": "3ero",
+
+    "¿A quiénes impacta?": "Estudiantes de tercer semestre",
+
+    "¿Qué es y qué implica?": "",
+
+    "Clave": "P2-17"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Discurso PrepaTec Local",
+
+    "¿Cuándo?": "Noviembre 2025",
+
+    "Fecha inicio": "2025-01-11",
+
+    "Fecha término": "2025-11-30",
+
+    "Semestre": "3ero",
+
+    "¿A quiénes impacta?": "Estudiantes y profesores de Español",
+
+    "¿Qué es y qué implica?": `Eliminatoria local de Discursos PrepaTec para seleccionar al estudiante que representará a la prepa en la etapa nacional. Implica que la directora o director de Prepa sea partícipe del proceso de selección del equipo o representante ganador`,
+
+    "Clave": "P2-18"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Discurso PrepaTec Nacional",
+
+    "¿Cuándo?": "Febrero 2026",
+
+    "Fecha inicio": "2026-01-02",
+
+    "Fecha término": "2026-02-28",
+
+    "Semestre": "4to",
+
+    "¿A quiénes impacta?": "Estudiantes ganadores por prepa y maestro acompañante",
+
+    "¿Qué es y qué implica?": `Muestra nacional de Discursos PrepaTec seleccionados (asiste un estudiante por prepa con el docente correspondiente`,
+
+    "Clave": "P2-19"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Líderes con Sentido Humano Local",
+
+    "¿Cuándo?": "Noviembre 2025",
+
+    "Fecha inicio": "2025-01-11",
+
+    "Fecha término": "2025-11-30",
+
+    "Semestre": "5to",
+
+    "¿A quiénes impacta?": "Mentores y estudiantes",
+
+    "¿Qué es y qué implica?": `Eliminatoria local de Líderes con Sentido Humano para seleccionar al equipo que representará a la prepa en la etapa nacional. Implica que la directora o director de Prepa sea partícipe del proceso de selección del equipo o representante ganador`,
+
+    "Clave": "P2-20"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "Líderes con Sentido Humano Nacional",
+
+    "¿Cuándo?": "Enero 2026",
+
+    "Fecha inicio": "2026-01-28",
+
+    "Fecha término": "2026-01-28",
+
+    "Semestre": "6to",
+
+    "¿A quiénes impacta?": "Estudiantes ganadores por prepa y maestro acompañante",
+
+    "¿Qué es y qué implica?": `Muestra nacional de proyectos ganadores, asiste el equipo ganador por prepa con el docente correspondiente`,
+
+    "Clave": "P2-21"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "PrepApps Nacional",
+
+    "¿Cuándo?": "22, 23 y 24 de septiembre 2025",
+
+    "Fecha inicio": "2025-09-22",
+
+    "Fecha término": "2025-09-24",
+
+    "Semestre": "5to",
+
+    "¿A quiénes impacta?": "Estudiantes ganadores por prepa y maestro acompañante",
+
+    "¿Qué es y qué implica?": `Concurso nacional de proyectos ganadores por prepa, asiste el equipo ganador con su mentor o profesor acompañante`,
+
+    "Clave": "P2-22"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Solutionary Lab: Design",
+
+    "¿Cuándo?": "11 y 12 de noviembre 2025",
+
+    "Fecha inicio": "2025-11-11",
+
+    "Fecha término": "2025-12-11",
+
+    "Semestre": "Todos",
+
+    "¿A quiénes impacta?": "Directoras y directores regionales",
+
+    "¿Qué es y qué implica?": `Taller presencial con socios estratégicos para finalizar el proceso de diseño de este espacio de aprendizaje. Implica de preferencia que dirs regionales sean parte de este proceso`,
+
+    "Clave": "P2-23"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Reflexión Informe de Competencias",
+
+    "¿Cuándo?": "Primer parcial",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-09-24",
+
+    "Semestre": "3ero y 5to",
+
+    "¿A quiénes impacta?": "Mentores y estudiantes",
+
+    "¿Qué es y qué implica?": `Implica que cada mentora o mentor dedique una sesión con su grupo durante el primer parcial para realizar esta reflexión con sus estudiantes y que el director de Prepa asegure la implementación.`,
+
+    "Clave": "P2-24"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 4",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Hackatón Futuro PrepApps",
+
+    "¿Cuándo?": "14 y 15 de octubre 2025",
+
+    "Fecha inicio": "2025-10-14",
+
+    "Fecha término": "2025-10-15",
+
+    "Semestre": "4to",
+
+    "¿A quiénes impacta?": "1 maestro de Tecnología y 1 maestro de Sociales por prepa",
+
+    "¿Qué es y qué implica?": `Hackatón en el que se trabajará para reformular la vivencia sello de PrepApps`,
+
+    "Clave": "P4-8"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "Hackatón Futuro Cortometraje",
+
+    "¿Cuándo?": "6 y 7 de octubre 2025",
+
+    "Fecha inicio": "2025-06-10",
+
+    "Fecha término": "2025-07-10",
+
+    "Semestre": "2do",
+
+    "¿A quiénes impacta?": "Profesores Búnker",
+
+    "¿Qué es y qué implica?": `Hackatón en el que se trabajará para reformular la vivencia sello de Cortometrajes`,
+
+    "Clave": "P2-25"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "PrepaTec Avanza",
+
+    "¿Cuándo?": "10 al 21 de noviembre 2025",
+
+    "Fecha inicio": "2025-10-11",
+
+    "Fecha término": "2025-11-21",
+
+    "Semestre": "1ero, 3ero y 5to",
+
+    "¿A quiénes impacta?": "Estudiantes y líderes de proceso",
+
+    "¿Qué es y qué implica?": `Aplicación del examen estratégico de PrepaTec Avanza. Implica preparar los datos de los estudiantes, separar un día para la aplicación y el acompañamiento en el despliegue.`,
+
+    "Clave": "P2-26"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AP Inglés",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-05-12",
+
+    "Semestre": "5to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-8"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "AP Inglés",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "6to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-9"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AP Pre-Cálculo",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-05-12",
+
+    "Semestre": "3ero",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-10"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "AP Pre-Cálculo",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "4to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-11"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AP Cálculo",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-05-12",
+
+    "Semestre": "5to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-12"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "AP Cálculo",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "6to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-13"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AP Micro",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-05-12",
+
+    "Semestre": "5to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-14"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "AP Macro",
+
+    "¿Cuándo?": "Enero - Mayo 2026",
+
+    "Fecha inicio": "2026-01-01",
+
+    "Fecha término": "2026-05-30",
+
+    "Semestre": "6to",
+
+    "¿A quiénes impacta?": "Estudiantes cursando AP y profesores que impartan la materia",
+
+    "¿Qué es y qué implica?": `Promover y dar seguimiento a los docentes y estudiantes que participan.`,
+
+    "Clave": "P5-15"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 5",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Enero-Mayo 2026",
+
+    "¿Qué?": "APs pagos y exámenes",
+
+    "¿Cuándo?": "20 de mayo",
+
+    "Fecha inicio": "2026-05-20",
+
+    "Fecha término": "2026-05-20",
+
+    "Semestre": "6to",
+
+    "¿A quiénes impacta?": `Estudiantes cursando AP y directores de departamento y programa`,
+
+    "¿Qué es y qué implica?": `Asegurar que el responsable del proceso de la Prepa, de seguimiento al pago del examen y al proceso de presentación de la evaluación`,
+
+    "Clave": "P5-16"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Sugerida",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AFA Matemáticas",
+
+    "¿Cuándo?": "Primer parcial",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-09-24",
+
+    "Semestre": "1ero",
+
+    "¿A quiénes impacta?": `Profesores de matemáticas y estudiantes cuyo diagnóstico requiera que tomen el curso`,
+
+    "¿Qué es y qué implica?": `Ofrecer talleres de acompañamiento y nivelación acorde a necesidades. DDAs realizan la gestión de formación de grupos y selección de profesores y el pago es central`,
+
+    "Clave": "P2-27"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AFA Español",
+
+    "¿Cuándo?": "Segundo parcial",
+
+    "Fecha inicio": "2025-09-25",
+
+    "Fecha término": "2025-05-11",
+
+    "Semestre": "1ero",
+
+    "¿A quiénes impacta?": `Profesores de español y estudiantes cuyo diagnóstico requiera que tomen el curso`,
+
+    "¿Qué es y qué implica?": `Ofrecer talleres de acompañamiento y nivelación acorde a necesidades. DDAs realizan la gestión de formación de grupos y selección de profesores y el pago es central`,
+
+    "Clave": "P2-28"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "AFA Inglés",
+
+    "¿Cuándo?": "Agosto - Diciembre 2025",
+
+    "Fecha inicio": "2025-11-08",
+
+    "Fecha término": "2025-05-12",
+
+    "Semestre": "1ero",
+
+    "¿A quiénes impacta?": `Profesores de inglés y estudiantes cuyo diagnóstico indique que deben tomar el curso`,
+
+    "¿Qué es y qué implica?": `Ofrecer talleres de acompañamiento y nivelación acorde a necesidades. DDAs realizan la gestión de formación de grupos y selección de profesores y el pago es central`,
+
+    "Clave": "P2-29"
+
+  },
+
+  {
+
+    "Prioridad": "Prioridad 2",
+
+    "Implementación": "Estratégica",
+
+    "Periodo Académico": "Agosto-Diciembre 2025",
+
+    "¿Qué?": "IES aplicación",
+
+    "¿Cuándo?": "Octubre 2025",
+
+    "Fecha inicio": "2025-01-10",
+
+    "Fecha término": "2025-10-31",
+
+    "Semestre": "1ero",
+
+    "¿A quiénes impacta?": "Mentores y estudiantes",
+
+    "¿Qué es y qué implica?": `Sensibilización a estudiantes y aplicación de encuesta IES en primer semestre, implica dos sesiones y se hace en mentoría`,
+
+    "Clave": "P2-30"
+
+  }
+
+];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cardContainer = document.getElementById('card-container');
+            const tabsContainer = document.getElementById('tabs');
             const priorityFilter = document.getElementById('priority-filter');
             const implementationFilter = document.getElementById('implementation-filter');
-            const keyFilter = document.getElementById('key-filter');
-            
-            // Color mapping based on priority
-            const priorityConfig = {
-                "Prioridad 2": { color: "#E56D2C", name: "Prioridad 2" },
-                "Prioridad 3": { color: "#4191CC", name: "Prioridad 3" },
-                "Prioridad 4": { color: "#D72F8E", name: "Prioridad 4" },
-                "Prioridad 5": { color: "#036CD8", name: "Prioridad 5" }
+            const noResults = document.getElementById('no-results');
+
+            let currentTab = 'agosto-diciembre-2025';
+
+            const priorityColors = {
+                "Prioridad 2": "#E56D2C",
+                "Prioridad 3": "#4191CC",
+                "Prioridad 4": "#D72F8E",
+                "Prioridad 5": "#036CD8",
             };
 
-            // --- UI SETUP ---
-
-            /**
-             * Populates filter dropdowns with unique options from the data.
-             */
-            function setupFilters() {
-                const priorities = [...new Set(jsonData.map(item => item.Prioridad))].sort();
-                const implementations = [...new Set(jsonData.map(item => item['Implementación']))].sort();
-                const keys = [...new Set(jsonData.map(item => item.Clave))].sort();
-
-                priorityFilter.innerHTML = '<option value="Todas">Todas las Prioridades</option>';
-                priorities.forEach(p => {
-                    priorityFilter.innerHTML += `<option value="${p}">${p}</option>`;
-                });
-
-                implementationFilter.innerHTML = '<option value="Todos">Todas las Implementaciones</option>';
-                implementations.forEach(i => {
-                    implementationFilter.innerHTML += `<option value="${i}">${i}</option>`;
-                });
-
-                keyFilter.innerHTML = '<option value="Todas">Todas las Claves</option>';
-                keys.forEach(k => {
-                    keyFilter.innerHTML += `<option value="${k}">${k}</option>`;
-                });
-            }
-
-            /**
-             * Creates tabs based on unique academic periods in the data.
-             */
-            function setupTabs() {
-                const academicPeriods = [...new Set(jsonData.map(item => item['Periodo Académico']))].sort();
-                
-                tabsContainer.innerHTML = '';
-                tabContent.innerHTML = '';
-
-                academicPeriods.forEach((period, index) => {
-                    // Create Tab Button
-                    const tabButton = `
-                        <li class="mr-2">
-                            <a href="#" class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 ${index === 0 ? 'active' : ''}" data-tab="${period}">
-                                ${period}
-                            </a>
-                        </li>`;
-                    tabsContainer.innerHTML += tabButton;
-
-                    // Create Tab Content Pane
-                    const contentPane = `<div id="${period}" class="tab-pane ${index === 0 ? '' : 'hidden'}"></div>`;
-                    tabContent.innerHTML += contentPane;
-                });
-            }
-            
-            // --- RENDERING ---
-
-            /**
-             * Formats a date string (YYYY-MM-DD) to a more readable format.
-             * @param {string} dateString - The date string to format.
-             * @returns {string} The formatted date.
-             */
-            function formatDate(dateString) {
-                if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
-                    return dateString; // Return original if not in YYYY-MM-DD format
-                }
-                // Using UTC to prevent timezone offset issues
-                const [year, month, day] = dateString.split('-');
-                const date = new Date(Date.UTC(year, month - 1, day));
-                return date.toLocaleDateString('es-MX', {
-                    year: 'numeric',
-                    month: 'long',
+            const formatDate = (dateString) => {
+                if (!dateString || dateString.toLowerCase() === 'n/a') return 'N/A';
+                const date = new Date(dateString + 'T00:00:00'); // Asumir zona horaria local
+                return date.toLocaleDateString('es-ES', {
                     day: 'numeric',
-                    timeZone: 'UTC'
+                    month: 'long',
+                    year: 'numeric'
                 });
-            }
-
-            /**
-             * Creates the HTML string for a single activity card.
-             * @param {Object} item - The data object for the card.
-             * @returns {string} The HTML string of the card.
-             */
-            function createCardHTML(item) {
-                const config = priorityConfig[item.Prioridad] || { color: '#6b7280', name: item.Prioridad };
-                const borderColorStyle = `border-left-color: ${config.color}`;
-                const labelColorStyle = `background-color: ${config.color}`;
-
+            };
+            
+            const createCard = (item) => {
+                const color = priorityColors[item.Prioridad] || '#6B7280'; // Gris por defecto
+                
                 return `
-                    <div class="activity-card bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer border-l-4" style="${borderColorStyle}">
-                        <div class="p-5">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-xs text-gray-500 font-medium">${item.Clave}</span>
-                                <div class="flex items-center gap-2">
-                                    <span style="${labelColorStyle}" class="text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">${config.name}</span>
-                                    <i data-feather="chevron-down" class="expand-icon text-gray-500"></i>
-                                </div>
+                    <div class="card bg-white rounded-lg shadow-md overflow-hidden flex flex-col" 
+                         data-periodo="${item['Periodo Académico']}" 
+                         data-prioridad="${item.Prioridad}" 
+                         data-implementacion="${item['Implementación']}">
+                        <div class="p-4 border-l-4" style="border-color: ${color};">
+                             <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs text-gray-500 font-mono">${item.Clave}</span>
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background-color: ${color}20; color: ${color};">
+                                    ${item.Prioridad}
+                                </span>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-900">${item['¿Qué?']}</h3>
-                            <p class="text-sm text-gray-600 mt-1">${item['¿Cuándo?']}</p>
-                            <span class="mt-3 inline-block bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full">${item['Implementación']}</span>
+                            <h3 class="font-bold text-gray-800">${item['¿Qué?']}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${item['¿Cuándo?']}</p>
+                            <span class="inline-block bg-gray-200 text-gray-700 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full mt-3">
+                                ${item['Implementación']}
+                            </span>
                         </div>
-                        <div class="details-content">
-                            <div class="px-5 pb-5 pt-2 border-t border-gray-100">
-                                <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
-                                    <div class="sm:col-span-2">
-                                        <dt class="font-semibold text-gray-800">Descripción:</dt>
-                                        <dd class="text-gray-600">${item['¿Qué es y qué implica?']}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="font-semibold text-gray-800">Impacta a:</dt>
-                                        <dd class="text-gray-600">${item['¿A quiénes impacta?']}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="font-semibold text-gray-800">Semestre:</dt>
-                                        <dd class="text-gray-600">${item.Semestre}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="font-semibold text-gray-800">Fecha de Inicio:</dt>
-                                        <dd class="text-gray-600">${formatDate(item['Fecha inicio'])}</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="font-semibold text-gray-800">Fecha de Término:</dt>
-                                        <dd class="text-gray-600">${formatDate(item['Fecha término'])}</dd>
-                                    </div>
-                                </dl>
-                            </div>
+                        <div class="card-details px-4 pb-4">
+                            <hr class="my-3">
+                            <dl class="text-sm space-y-2">
+                                <div class="grid grid-cols-3 gap-1">
+                                    <dt class="font-semibold text-gray-600 col-span-1">Inicio:</dt>
+                                    <dd class="text-gray-800 col-span-2">${formatDate(item['Fecha inicio'])}</dd>
+                                </div>
+                                <div class="grid grid-cols-3 gap-1">
+                                    <dt class="font-semibold text-gray-600 col-span-1">Término:</dt>
+                                    <dd class="text-gray-800 col-span-2">${formatDate(item['Fecha término'])}</dd>
+                                </div>
+                                 <div class="grid grid-cols-3 gap-1">
+                                    <dt class="font-semibold text-gray-600 col-span-1">Impacta a:</dt>
+                                    <dd class="text-gray-800 col-span-2">${item['¿A quiénes impacta?']}</dd>
+                                </div>
+                                <div class="pt-2">
+                                    <dt class="font-semibold text-gray-600 mb-1">Detalles:</dt>
+                                    <dd class="text-gray-800">${item['¿Qué es y qué implica?']}</dd>
+                                </div>
+                            </dl>
+                        </div>
+                        <div class="mt-auto bg-gray-50 text-center py-2 px-4 text-xs text-blue-600 cursor-pointer hover:bg-gray-100 expand-toggle">
+                            Ver detalles
                         </div>
                     </div>
                 `;
-            }
+            };
 
-            /**
-             * Renders cards into the specified container based on filtered data.
-             * @param {Array<Object>} data - The filtered array of data objects.
-             * @param {string} containerId - The ID of the container to render cards in.
-             */
-            function renderCards(data, containerId) {
-                const container = document.getElementById(containerId);
-                if (!container) return;
+            const populateFilters = () => {
+                const priorities = [...new Set(data.map(item => item.Prioridad))];
+                const implementations = [...new Set(data.map(item => item['Implementación']))];
 
-                if (data.length === 0) {
-                    container.innerHTML = `<div class="text-center py-12 col-span-full">
-                        <h3 class="text-lg font-medium text-gray-700">No se encontraron actividades</h3>
-                        <p class="text-gray-500 mt-1">Intenta ajustar los filtros de búsqueda.</p>
-                    </div>`;
-                    return;
-                }
+                priorities.sort().forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p;
+                    option.textContent = p;
+                    priorityFilter.appendChild(option);
+                });
 
-                container.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${data.map(createCardHTML).join('')}
-                    </div>`;
+                implementations.sort().forEach(i => {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    implementationFilter.appendChild(option);
+                });
+            };
 
-                // After rendering, apply feather icons
-                feather.replace();
-            }
-            
-            // --- EVENT HANDLING & MAIN LOGIC ---
-
-            /**
-             * Main function to filter data and update the view.
-             */
-            function filterAndRender() {
-                const activeTabEl = document.querySelector('.tab-button.active');
-                if (!activeTabEl) return;
+            const renderCards = () => {
+                const periodMapping = {
+                    'agosto-diciembre-2025': 'Agosto-Diciembre 2025',
+                    'enero-mayo-2026': 'Enero-Mayo 2026'
+                };
                 
-                const activeTab = activeTabEl.dataset.tab;
+                const selectedPeriod = periodMapping[currentTab];
                 const selectedPriority = priorityFilter.value;
                 const selectedImplementation = implementationFilter.value;
-                const selectedKey = keyFilter.value;
 
-                const filteredData = jsonData.filter(item => {
-                    const periodMatch = item['Periodo Académico'] === activeTab;
-                    const priorityMatch = selectedPriority === 'Todas' || item.Prioridad === selectedPriority;
-                    const implementationMatch = selectedImplementation === 'Todos' || item['Implementación'] === selectedImplementation;
-                    const keyMatch = selectedKey === 'Todas' || item.Clave === selectedKey;
-                    return periodMatch && priorityMatch && implementationMatch && keyMatch;
+                const filteredData = data.filter(item => {
+                    const periodMatch = item['Periodo Académico'] === selectedPeriod;
+                    const priorityMatch = selectedPriority === 'all' || item.Prioridad === selectedPriority;
+                    const implementationMatch = selectedImplementation === 'all' || item['Implementación'] === selectedImplementation;
+                    return periodMatch && priorityMatch && implementationMatch;
                 });
-                renderCards(filteredData, activeTab);
-            }
-
-            // Event listener for tab switching
-            tabsContainer.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = e.target.closest('.tab-button');
-                if (!target) return;
-
-                // Update active tab styles
-                document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
-                target.classList.add('active');
-
-                // Show/hide tab content panes
-                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
-                const activePane = document.getElementById(target.dataset.tab);
-                if (activePane) {
-                    activePane.classList.remove('hidden');
-                }
                 
-                filterAndRender();
-            });
+                cardContainer.innerHTML = filteredData.map(createCard).join('');
+
+                if (filteredData.length === 0) {
+                    noResults.classList.remove('hidden');
+                    cardContainer.classList.add('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                    cardContainer.classList.remove('hidden');
+                }
+            };
             
-            // Event listener for expanding/collapsing cards (using event delegation)
-            tabContent.addEventListener('click', (e) => {
-                const card = e.target.closest('.activity-card');
-                if (card) {
-                    card.classList.toggle('expanded');
+            // Event Listeners
+            tabsContainer.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    currentTab = e.target.dataset.tab;
+                    // Actualizar estilos de pestañas activas
+                    tabsContainer.querySelectorAll('button').forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    });
+                    e.target.classList.add('tab-active');
+                    e.target.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    renderCards();
                 }
             });
 
-            // Event listeners for filters
-            priorityFilter.addEventListener('change', filterAndRender);
-            implementationFilter.addEventListener('change', filterAndRender);
-            keyFilter.addEventListener('change', filterAndRender);
+            priorityFilter.addEventListener('change', renderCards);
+            implementationFilter.addEventListener('change', renderCards);
 
-            // --- INITIALIZATION ---
-            function init() {
-                setupTabs();
-                setupFilters();
-                filterAndRender(); // Render initial view for the first active tab
-            }
+            cardContainer.addEventListener('click', (e) => {
+                const toggle = e.target.closest('.expand-toggle');
+                if (toggle) {
+                    const card = toggle.closest('.card');
+                    card.classList.toggle('expanded');
+                    toggle.textContent = card.classList.contains('expanded') ? 'Ocultar detalles' : 'Ver detalles';
+                }
+            });
 
-            init();
+            // Inicialización
+            populateFilters();
+            renderCards();
         });
     </script>
 </body>
 </html>
-
 
