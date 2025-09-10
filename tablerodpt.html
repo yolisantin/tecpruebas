@@ -1,1 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tablero de Plan de Trabajo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+  <!-- Filtros -->
+  <div class="flex flex-wrap gap-4 mb-6">
+    <select id="filtroPrioridad" class="p-2 border rounded">
+      <option value="Todas">Todas las prioridades</option>
+      <option value="Prioridad 2">Prioridad 2</option>
+      <option value="Prioridad 3">Prioridad 3</option>
+      <option value="Prioridad 4">Prioridad 4</option>
+      <option value="Prioridad 5">Prioridad 5</option>
+    </select>
+    <select id="filtroImplementacion" class="p-2 border rounded">
+      <option value="Todas">Todas las implementaciones</option>
+      <option value="Sugerida">Sugerida</option>
+      <option value="Obligatoria">Obligatoria</option>
+    </select>
+    <select id="filtroClave" class="p-2 border rounded">
+      <option value="Todas">Todas las claves</option>
+      <!-- Se llenará dinámicamente -->
+    </select>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="mb-4">
+    <button onclick="mostrarPeriodo('Agosto-Diciembre 2025')" class="tab-btn">Agosto - Diciembre 2025</button>
+    <button onclick="mostrarPeriodo('Enero-Mayo 2026')" class="tab-btn">Enero - Mayo 2026</button>
+  </div>
+
+  <!-- Contenedor de tarjetas -->
+  <div id="contenedorTarjetas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+  <script>
+    const coloresPrioridad = {
+      "Prioridad 2": "#E56D2C",
+      "Prioridad 3": "#4191CC",
+      "Prioridad 4": "#D72F8E",
+      "Prioridad 5": "#036CD8"
+    };
+
+    const datos = [
+      {
+        "Clave": "P5-1",
+        "Prioridad": "Prioridad 5",
+        "Implementación": "Sugerida",
+        "Periodo Académico": "Agosto-Diciembre 2025",
+        "¿Qué?": "Cierres de convocatoria proyectos y ponencias docentes ISTE",
+        "¿Cuándo?": "2025-10-06",
+        "Fecha inicio": "2025-08-11",
+        "Fecha término": "2025-10-06",
+        "Semestre": "Todos",
+        "¿A quiénes impacta?": "Mentores y docentes",
+        "¿Qué es y qué implica?": "Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias"
+      },
+      {
+        "Clave": "P5-2",
+        "Prioridad": "Prioridad 5",
+        "Implementación": "Sugerida",
+        "Periodo Académico": "Agosto-Diciembre 2025",
+        "¿Qué?": "Cierres de convocatoria proyectos y ponencias docentes SXSW",
+        "¿Cuándo?": "2025-10-26",
+        "Fecha inicio": "2025-08-11",
+        "Fecha término": "2025-10-26",
+        "Semestre": "Todos",
+        "¿A quiénes impacta?": "Mentores y docentes",
+        "¿Qué es y qué implica?": "Proyectar a nuestros equipos en congresos internacionales, implica que registren ponencias"
+      }
+    ];
+
+    let periodoActual = "Agosto-Diciembre 2025";
+
+    function mostrarPeriodo(periodo) {
+      periodoActual = periodo;
+      renderizarTarjetas();
+    }
+
+    function renderizarTarjetas() {
+      const contenedor = document.getElementById("contenedorTarjetas");
+      contenedor.innerHTML = "";
+
+      const prioridadFiltro = document.getElementById("filtroPrioridad").value;
+      const implementacionFiltro = document.getElementById("filtroImplementacion").value;
+      const claveFiltro = document.getElementById("filtroClave").value;
+
+      const clavesUnicas = [...new Set(datos.map(d => d.Clave))];
+      const claveSelect = document.getElementById("filtroClave");
+      claveSelect.innerHTML = '<option value="Todas">Todas las claves</option>';
+      clavesUnicas.forEach(clave => {
+        const opt = document.createElement("option");
+        opt.value = clave;
+        opt.textContent = clave;
+        claveSelect.appendChild(opt);
+      });
+
+      datos.filter(d => 
+        d["Periodo Académico"] === periodoActual &&
+        (prioridadFiltro === "Todas" || d.Prioridad === prioridadFiltro) &&
+        (implementacionFiltro === "Todas" || d.Implementación === implementacionFiltro) &&
+        (claveFiltro === "Todas" || d.Clave === claveFiltro)
+      ).forEach(d => {
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "bg-white rounded shadow p-4 border-l-8";
+        tarjeta.style.borderColor = coloresPrioridad[d.Prioridad];
+
+        tarjeta.innerHTML = `
+          <div class="text-sm text-gray-500">${d.Clave}</div>
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-semibold">${d["¿Qué?"]}</h2>
+            <span class="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded">${d.Implementación}</span>
+          </div>
+          <div class="text-sm text-gray-600 mb-2">${formatearFecha(d["¿Cuándo?"])}</div>
+          <span class="inline-block text-xs font-bold px-2 py-1 rounded text-white" style="background-color:${coloresPrioridad[d.Prioridad]}">${d.Prioridad}</span>
+          <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="mt-2 text-blue-600 text-sm underline">Ver detalles</button>
+          <div class="hidden mt-2 text-sm text-gray-700">
+            <p><strong>Fecha inicio:</strong> ${formatearFecha(d["Fecha inicio"])}</p>
+            <p><strong>Fecha término:</strong> ${formatearFecha(d["Fecha término"])}</p>
+            <p><strong>Semestre:</strong> ${d["Semestre"]}</p>
+            <p><strong>¿A quiénes impacta?:</strong> ${d["¿A quiénes impacta?"]}</p>
+            <p><strong>¿Qué es y qué implica?:</strong> ${d["¿Qué es y qué implica?"]}</p>
+          </div>
+        `;
+        contenedor.appendChild(tarjeta);
+      });
+    }
+
+    function formatearFecha(fecha) {
+      const opciones = { day: 'numeric', month: 'long', year: 'numeric' };
+      return new Date(fecha).toLocaleDateString('es-MX', opciones);
+    }
+
+    // Inicializar
+    mostrarPeriodo(periodoActual);
+  </script>
+</body>
+</html>
 
